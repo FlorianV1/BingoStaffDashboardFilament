@@ -2,15 +2,19 @@
 
 namespace App\Filament\Resources;
 
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Grid;
+use Filament\Schemas\Components\Group;
+use Filament\Schemas\Components\Actions;
+use Filament\Tables\Columns\Layout\Split;
+use Filament\Actions\Action;
+use Filament\Schemas\Schema;
+use Filament\Tables\Table;
+use Filament\Actions\ViewAction;
 use App\Filament\Resources\PlayerResource\Pages;
 use App\Models\Player;
-use Filament\Infolists\Components\Actions\Action;
-use Filament\Infolists\Components\Section;
-use Filament\Infolists\Components\Grid;
-use Filament\Forms\Form;
 use Filament\Forms\Components\TextInput;
 use Filament\Infolists\Components\ImageEntry;
-use Filament\Infolists\Infolist;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Columns\ImageColumn;
@@ -18,23 +22,20 @@ use Filament\Tables\Columns\TextColumn;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Database\Eloquent\Builder;
 use Filament\Infolists\Components\TextEntry;
-use Filament\Infolists\Components\Group;
 use Filament\Infolists\Components\KeyValueEntry;
 use Filament\Infolists\Components\RepeatableEntry;
-use Filament\Infolists\Components\Actions;
-use Filament\Infolists\Components\Split;
 use Filament\Support\Enums\FontWeight;
-
 
 class PlayerResource extends Resource
 {
     protected static ?string $model = Player::class;
-    protected static ?string $navigationIcon = 'heroicon-o-user-group';
 
-    public static function infolist(Infolist $infolist): Infolist
+    protected static string|null|\BackedEnum $navigationIcon = 'heroicon-o-user-group';
+
+    public static function infolist(Schema $schema): Schema
     {
-        return $infolist
-            ->schema([
+        return $schema
+            ->components([
                 Section::make('Player Overview')
                     ->schema([
                         Grid::make(3)
@@ -231,14 +232,11 @@ class PlayerResource extends Resource
                                                     ->label(fn ($record) => $record->getAttribute('server') ?? 'Unknown Server')
                                                     ->icon('heroicon-o-server-stack')
                                                     ->modalHeading('Server Information')
-//                                                    ->modalButton('Close')
                                                     ->modalSubmitAction(false)
                                                     ->action(fn () => null)
                                                     ->modalContent(function ($record) {
                                                         $serverId = $record->server;
-
                                                         $server = \App\Models\BingoServer::find($serverId);
-
                                                         return view('filament.server-id-modal', [
                                                             'server' => $server,
                                                         ]);
@@ -249,6 +247,7 @@ class PlayerResource extends Resource
                                 ]),
                         ]),
                     ]),
+
                 Section::make('Punishments')
                     ->schema([
 
@@ -256,10 +255,12 @@ class PlayerResource extends Resource
                     ->icon('heroicon-o-shield-exclamation'),
             ]);
     }
-    public static function form(Form $form): Form
+
+    // Fixed: Updated method signature for v4 - now uses Schema instead of Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 Grid::make(1)
                     ->schema([
                         TextInput::make('name')
@@ -271,8 +272,6 @@ class PlayerResource extends Resource
                             ->label('Minecraft UUID')
                             ->disabled()
                             ->default(fn($player) => $player->uuid),
-
-                        TextInput::make(''),
 
                         TextInput::make('country_code')
                             ->label('Country')
@@ -287,10 +286,10 @@ class PlayerResource extends Resource
                             }),
                     ]),
             ]);
-
     }
 
-    public static function table(Tables\Table $table): Tables\Table
+    // Fixed: Updated method signature - should remain as Table
+    public static function table(Table $table): Table
     {
         return $table
             ->columns([
@@ -360,7 +359,7 @@ class PlayerResource extends Resource
                 TextColumn::make('created_at')
                     ->sortable()
                     ->toggleable(),
-                ])
+            ])
             ->filters([
                 Tables\Filters\TernaryFilter::make('online')
                     ->label('Online')
@@ -378,7 +377,7 @@ class PlayerResource extends Resource
                     ),
             ])
             ->actions([
-                Tables\Actions\ViewAction::make(),
+                ViewAction::make(),
             ])
             ->bulkActions([
                 //
