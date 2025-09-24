@@ -2,14 +2,20 @@
 
 namespace App\Filament\Resources;
 
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Grid;
+use Filament\Schemas\Components\Group;
+use Filament\Schemas\Components\Actions;
+use Filament\Tables\Columns\Layout\Split;
+use Filament\Actions\Action;
+use Filament\Schemas\Schema;
+use Filament\Tables\Table;
+use Filament\Actions\ViewAction;
 use App\Filament\Resources\BingoServerResource\Pages;
-use App\Filament\Resources\BingoServerResource\RelationManagers;
 use App\Models\BingoServer;
 use Filament\Forms;
-use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
-use Filament\Tables\Table;
 use Filament\Tables\Columns\TextInputColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
@@ -18,19 +24,19 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\IconColumn;
 
-
 class BingoServerResource extends Resource
 {
     protected static ?string $model = BingoServer::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-server-stack';
+    // Fixed: Simplified navigation icon type for v4 compatibility
+    protected static string|null|\backedenum $navigationIcon = 'heroicon-o-rectangle-stack';
 
-    public static function form(Form $form): Form
+    // Fixed: Updated method signature and corrected parameter usage
+    public static function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 TextInput::make('id')->disabled(),
-
                 Forms\Components\TextInput::make('ip_address')->nullable(),
                 Forms\Components\TextInput::make('port')->numeric()->default(8080),
             ]);
@@ -59,41 +65,40 @@ class BingoServerResource extends Resource
                     ->sortable()
                     ->searchable()
                     ->copyable()
-                    ->copyMessage('id copied')
+                    ->copyMessage('Port copied')
                     ->copyMessageDuration(1500),
                 TextColumn::make('variant')
                     ->label('Variant')
                     ->sortable()
                     ->searchable()
                     ->copyable()
-                    ->copyMessage('id copied')
+                    ->copyMessage('Variant copied')
                     ->copyMessageDuration(1500),
                 TextColumn::make('state')
                     ->label('State')
                     ->sortable()
                     ->searchable()
                     ->copyable()
-                    ->copyMessage('id copied')
+                    ->copyMessage('State copied')
                     ->copyMessageDuration(1500),
                 TextColumn::make('players')
                     ->label('Players')
                     ->sortable()
                     ->searchable()
                     ->copyable()
-                    ->copyMessage('id copied')
+                    ->copyMessage('Players copied')
                     ->copyMessageDuration(1500),
-                IconColumn::make('restricted')->sortable()
-                ->label('Restricted')
-                ->boolean(),
+                IconColumn::make('restricted')
+                    ->sortable()
+                    ->label('Restricted')
+                    ->boolean(),
                 ImageColumn::make('bound_to')
-                    ->label('Bound To')
                     ->label('Player')
                     ->getStateUsing(fn ($record) =>
                     $record->bound_to ? "https://nmsr.nickac.dev/bust/{$record->bound_to}" : null
                     )
                     ->size(25)
                     ->toggleable(),
-
                 TextColumn::make('join_code')
                     ->label('Join Code')
                     ->sortable()
@@ -107,7 +112,7 @@ class BingoServerResource extends Resource
                 //
             ])
             ->actions([
-                Tables\Actions\ViewAction::make(),
+                ViewAction::make(),
             ])
             ->bulkActions([
                 //
@@ -128,5 +133,4 @@ class BingoServerResource extends Resource
             'view' => Pages\ViewBingoServer::route('/{record}'),
         ];
     }
-
 }
