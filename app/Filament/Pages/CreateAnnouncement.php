@@ -4,95 +4,79 @@ namespace App\Filament\Pages;
 
 use App\Models\PlayerAnnouncement;
 use Filament\Pages\Page;
-use Filament\Forms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Schemas\Components\Wizard;
 use Filament\Schemas\Components\Wizard\Step;
-use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\TextInput;
+use Filament\Schemas\Schema;
 use Filament\Actions\Action;
 use Filament\Schemas\Components\Section;
-use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\View;
-use Filament\Schemas\Schema;
-use Filament\Tables\Columns\Column;
 use Filament\Notifications\Notification;
+use BackedEnum;
 class CreateAnnouncement extends Page implements HasForms
 {
     use InteractsWithForms;
-
-    protected static string|null|\backedenum $navigationIcon = 'heroicon-o-megaphone';
-    protected static ?string $navigationLabel = null;
-    protected string $view = 'filament.pages.create-announcement';
+    protected static string | BackedEnum | null $navigationIcon = 'heroicon-o-megaphone';
+    protected static ?string $navigationLabel = 'Create Announcement';
     protected static ?string $slug = 'create-announcement';
 
-    public array $formData = [];
+    public ?array $data = [];
 
     public function mount(): void
     {
-        $this->form->fill($this->formData);
+        $this->form->fill();
     }
 
-    protected function getFormSchema(): Schema
+    public function form(Schema $schema): Schema
     {
-        return Schema::make()
-            ->components([
+        return $schema
+            ->schema([
                 Wizard::make([
-                    Step::make('Type')
-                        ->schema([
-                            Section::make()
-                                ->schema([
-                                    View::make('form.section-heading')
-                                        ->viewData(['text' => 'Message Type']),
+                Step::make('Type')
+                    ->schema([
+                        Section::make('Message Type')
+                            ->schema([
+                                View::make('form.prefix-selector'),
+                            ]),
+                    ]),
 
-                                    View::make('form.prefix-selector'),
-                                ])
-                                ->columnSpanFull(),
-                        ]),
-                    Step::make('Sent to')
-                        ->schema([
-                            Section::make()
-                                ->schema([
-                                    View::make('form.section-heading')
-                                        ->viewData(['text' => 'Send To']),
+                Step::make('Sent to')
+                    ->schema([
+                        Section::make('Send To')
+                            ->schema([
+                                View::make('form.recipient-selector'),
 
-                                    View::make('form.recipient-selector'),
+                                TextInput::make('player')
+                                    ->label('Player UUID')
+                                    ->visible(fn ($get) => $get('recipientType') === 'player')
+                                    ->required(fn ($get) => $get('recipientType') === 'player'),
+                            ]),
+                    ]),
 
-                                    TextInput::make('player')
-                                        ->statePath('formData.player')
-                                        ->label('Player UUID')
-                                        ->visible(fn ($get) => $get('formData.recipientType') === 'player')
-                                        ->required(fn ($get) => $get('formData.recipientType') === 'player'),
-                                ])
-                                ->columnSpanFull(),
-                        ]),
+                Step::make('Message')
+                    ->schema([
+                        Section::make('Chat Message')
+                            ->schema([
+                                View::make('form.chat-colors'),
 
-                    Step::make('Message')
-                        ->schema([
-                            Section::make()
-                                ->schema([
-                                    View::make('form.section-heading')
-                                        ->viewData(['text' => 'Chat Message']),
-
-                                    View::make('form.chat-colors'),
-
-                                    TextInput::make('message')
-                                        ->statePath('formData.message')
-                                        ->label('Chat')
-                                        ->placeholder('Type your message here...')
-                                        ->required()
-                                        ->maxLength(255)
-                                        ->extraAttributes(['x-ref' => 'chatInput']), // link x-ref to Blade view
-                                ]),
-                        ]),
+                                TextInput::make('message')
+                                    ->label('Chat')
+                                    ->placeholder('Type your message here...')
+                                    ->required()
+                                    ->maxLength(255)
+                                    ->extraAttributes(['x-ref' => 'chatInput']),
+                            ]),
+                    ]),
                 ])
                     ->submitAction(
                         Action::make('send')
                             ->label('Send Announcement')
-                            ->action('send')
+                            ->submit('send')
                     ),
-            ]);
+            ])
+            ->statePath('data');
     }
 
     public function send(): void
@@ -100,17 +84,21 @@ class CreateAnnouncement extends Page implements HasForms
         $data = $this->form->getState();
 
         PlayerAnnouncement::create([
-            'player_uuid' => $data['recipientType'] === 'player' ? $data['player'] : null,
-            'message' => $data['prefix'] . ' ' . $data['message'],
+            'player_uuid' => ($data['recipientType'] ?? null) === 'player' ? ($data['player'] ?? null) : null,
+            'message' => ($data['prefix'] ?? '') . ' ' . ($data['message'] ?? ''),
             'is_sent' => false,
         ]);
 
-        // Fixed: Updated notification syntax for v4
         Notification::make()
-            ->title('Announcement created.')
+            ->title('Announcement created successfully.')
             ->success()
             ->send();
 
-        $this->form->fill([]);
+        $this->form->fill();
+    }
+
+    public static function getUrl(array $parameters = [], bool $isAbsolute = true, ?string $panel = null, ?\Illuminate\Database\Eloquent\Model $tenant = null): string
+    {
+        return parent::getUrl($parameters, $isAbsolute, $panel, $tenant);
     }
 }

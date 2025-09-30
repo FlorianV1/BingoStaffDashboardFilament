@@ -1,9 +1,8 @@
 <?php
 
-namespace App\Filament\Resources\BingoServers\Pages;
+namespace App\Filament\Resources\BingoServerResource\Pages;
 
-use App\Filament\Resources\BingoServers\BingoServers\BingoServerResource;
-use Filament\Actions;
+use App\Filament\Resources\BingoServerResource;
 use Filament\Resources\Pages\ViewRecord;
 
 class ViewBingoServer extends ViewRecord

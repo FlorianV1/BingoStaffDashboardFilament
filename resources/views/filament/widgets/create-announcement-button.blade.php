@@ -1,15 +1,21 @@
 <x-filament-widgets::widget>
-    <x-filament::section>
-        <div class="space-y-2">
-            <h2 class="text-lg font-bold">Announcements</h2>
-
+    <x-filament::section
+        heading="Announcements"
+        description="Create and manage player announcements"
+    >
+        @if($canCreateAnnouncement)
             <x-filament::button
                 tag="a"
-                href="{{ \App\Filament\Pages\CreateAnnouncement::getUrl() }}"
+                href="{{ $announcementUrl }}"
                 icon="heroicon-o-megaphone"
+                color="primary"
             >
                 Create Announcement
             </x-filament::button>
-        </div>
+        @else
+            <x-filament::badge color="warning">
+                You don't have permission to create announcements
+            </x-filament::badge>
+        @endif
     </x-filament::section>
 </x-filament-widgets::widget>
