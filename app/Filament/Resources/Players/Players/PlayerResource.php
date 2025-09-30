@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Resources;
+namespace App\Filament\Resources\Players\Players;
 
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Grid;
@@ -11,7 +11,7 @@ use Filament\Actions\Action;
 use Filament\Schemas\Schema;
 use Filament\Tables\Table;
 use Filament\Actions\ViewAction;
-use App\Filament\Resources\PlayerResource\Pages;
+use App\Filament\Resources\Players\Pages;
 use App\Models\Player;
 use Filament\Forms\Components\TextInput;
 use Filament\Infolists\Components\ImageEntry;
@@ -23,8 +23,9 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Database\Eloquent\Builder;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Components\KeyValueEntry;
-use Filament\Infolists\Components\RepeatableEntry;
+use Filament\Tables\Columns\Column;
 use Filament\Support\Enums\FontWeight;
+use Filament\Infolists\Components\RepeatableEntry;
 
 class PlayerResource extends Resource
 {

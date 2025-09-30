@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Filament\Resources\BingoServerResource\Pages;
+namespace App\Filament\Resources\BingoServers\Pages;
 
-use App\Filament\Resources\BingoServerResource;
+use App\Filament\Resources\BingoServers\BingoServers\BingoServerResource;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
 

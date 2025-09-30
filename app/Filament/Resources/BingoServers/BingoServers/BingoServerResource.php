@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Resources;
+namespace App\Filament\Resources\BingoServers\BingoServers;
 
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Grid;
@@ -11,7 +11,7 @@ use Filament\Actions\Action;
 use Filament\Schemas\Schema;
 use Filament\Tables\Table;
 use Filament\Actions\ViewAction;
-use App\Filament\Resources\BingoServerResource\Pages;
+use App\Filament\Resources\BingoServers\Pages;
 use App\Models\BingoServer;
 use Filament\Forms;
 use Filament\Resources\Resource;

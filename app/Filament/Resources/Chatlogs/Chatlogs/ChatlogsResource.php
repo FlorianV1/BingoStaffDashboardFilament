@@ -1,18 +1,15 @@
 <?php
 
-namespace App\Filament\Resources;
+namespace App\Filament\Resources\Chatlogs\Chatlogs;
 
-use App\Filament\Resources\ChatlogsResource\Pages;
+use App\Filament\Resources\Chatlogs\Pages;
 use App\Models\ChatMessage;
 use Filament\Forms\Components\FileUpload;
-use Filament\Forms\Components\Section;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\ViewField;
-use Filament\Forms\Form;
-use Filament\Infolists\Components\ImageEntry;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Schema;
 use Filament\Resources\Resource;
-use Filament\Tables;
 use Filament\Tables\Table;
+use Filament\Actions\ViewAction;
 use App\Models\Player;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
@@ -21,12 +18,12 @@ class ChatlogsResource extends Resource
 {
     protected static ?string $model = ChatMessage::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-chat-bubble-left-ellipsis';
+    protected static string|null|\backedenum $navigationIcon = 'heroicon-o-chat-bubble-left-ellipsis';
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 Section::make('Sender')
                     ->schema([
                         FileUpload::make('sender')
@@ -86,7 +83,7 @@ class ChatlogsResource extends Resource
                 //
             ])
             ->actions([
-                Tables\Actions\ViewAction::make(),
+                ViewAction::make(),
             ])
             ->bulkActions([
                 //

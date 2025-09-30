@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Filament\Resources\PlayerResource\Pages;
+namespace App\Filament\Resources\Players\Pages;
 
-use App\Filament\Resources\PlayerResource;
+use App\Filament\Resources\Players\Players\PlayerResource;
 use Filament\Actions\Action;
 use Filament\Pages\Actions;
 use Filament\Resources\Pages\ViewRecord;

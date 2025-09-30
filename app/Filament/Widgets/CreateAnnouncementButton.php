@@ -6,9 +6,10 @@ use Filament\Widgets\Widget;
 
 class CreateAnnouncementButton extends Widget
 {
-    protected static string $view = 'filament.widgets.create-announcement-button';
+    protected string $view = 'filament.widgets.create-announcement-button';
 
-    public function getData(): array
+    // Fixed: Updated method visibility and type hint for v4 compatibility
+    protected function getData(): array
     {
         return [];
     }
