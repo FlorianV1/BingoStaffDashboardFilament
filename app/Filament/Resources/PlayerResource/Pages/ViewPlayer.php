@@ -3,17 +3,20 @@
 namespace App\Filament\Resources\PlayerResource\Pages;
 
 use App\Filament\Resources\PlayerResource;
-use Filament\Actions;
-use Filament\Resources\Pages\EditRecord;
+use Filament\Actions\Action;
+use Filament\Resources\Pages\ViewRecord;
 
-class EditPlayer extends EditRecord
+class ViewPlayer extends ViewRecord
 {
     protected static string $resource = PlayerResource::class;
+
+    public int $chatPage = 1;
 
     protected function getHeaderActions(): array
     {
         return [
-            Actions\DeleteAction::make(),
+            Action::make('Edit')
+                ->url(fn () => PlayerResource::getUrl('edit', ['record' => $this->record])),
         ];
     }
 }
